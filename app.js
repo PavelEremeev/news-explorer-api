@@ -8,7 +8,7 @@ const { errors } = require('celebrate');
 const { login, createUser } = require('./controllers/users.js');
 const { requestLogger, errorLogger } = require('./middlewares/logger.js');
 const usersRouter = require('./routes/users.js');
-const cardsRouter = require('./routes/cards.js');
+const articleRouter = require('./routes/articles.js');
 const auth = require('./middlewares/auth');
 const {
   validateUser,
@@ -44,7 +44,7 @@ mongoose.connect(mongoDbUrl, mongoConnectionOptions);
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/users', auth, usersRouter);
-app.use('/cards', auth, cardsRouter);
+app.use('/article', auth, articleRouter);
 
 app.post('/signin', validateLogin, login);
 app.post('/signup', validateUser, createUser);

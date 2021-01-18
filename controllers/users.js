@@ -36,27 +36,6 @@ module.exports.login = (req, res, next) => {
     })
     .catch(next);
 
-  //   .catch((err) => {
-  //   res.status(401).send({ message: err.message })
-  // })
-  //   .then((user) => {
-  //     if (!user) {
-  //       return Promise.reject(new Error('Неправильные почта или пароль'));
-  //     } if (user) {
-  //       return bcrypt.compare(password, user.password)
-  //       .then((matched) => {
-  //         // аутентификация успешна
-  //         const token = jwt.sign({
-  //           _id: user._id
-  //         }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', {expiresIn: '7d'})
-  //         if (!matched) {
-  //         // хеши не совпали — отклоняем промис
-  //         return Promise.reject(new Error('Неправильные почта или пароль'));
-  //         }
-  //         res.send({ token });
-  //       });
-  //     }})
-  //   .catch(next)
 };
 
 // Получения списка всех зарегистрированных пользователей

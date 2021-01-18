@@ -11,8 +11,6 @@ const urlValidation = (value) => {
 const validateUser = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(40),
-    about: Joi.string().min(2).max(200),
-    avatar: Joi.string().custom(urlValidation),
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
   }),
@@ -44,7 +42,7 @@ const validateLogin = celebrate({
   }),
 });
 
-const validateCard = celebrate({
+const validateArticle = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
     link: Joi.string().custom(urlValidation).required(),
@@ -57,5 +55,5 @@ module.exports = {
   validateUserInfoUpdate,
   validateUserAvatarUpdate,
   validateLogin,
-  validateCard,
+  validateArticle,
 };

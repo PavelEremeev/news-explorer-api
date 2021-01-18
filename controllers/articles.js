@@ -1,18 +1,18 @@
-const Card = require('../models/card');
+const Article = require('../models/article');
 
 const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
 const ForbiddenError = require('../errors/ForbiddenError');
 
-module.exports.getCards = (req, res) => Card.find({})
+module.exports.getArticles = (req, res) => Article.find({})
   .populate('user')
-  .then((cards) => res.send(cards))
+  .then((articles) => res.send(articles))
   .catch((err) => res.status(500).send({ message: `Ошибка на сервере: ${err.message}` }));
 
-module.exports.createCard = (req, res, next) => {
+module.exports.createArticle = (req, res, next) => {
   console.log(req.body);
   console.log(req.user._id);
-  Card.create({
+  Article.create({
     name: req.body.name,
     link: req.body.link,
     owner: req.user._id,
@@ -20,31 +20,31 @@ module.exports.createCard = (req, res, next) => {
     .catch((err) => {
       throw new BadRequestError({ message: `Некорректные данные: ${err.message}` });
     })
-    .then((card) => res.send({ data: card }))
+    .then((article) => res.send({ data: article }))
     .catch(next);
 };
 
-module.exports.deleteCard = (req, res, next) => {
-  Card.findById(req.params._id)
+module.exports.deleteArticle = (req, res, next) => {
+  Article.findById(req.params._id)
     .orFail()
     .catch(() => {
       throw new NotFoundError({ message: 'Не найдено карточки с таким id' });
     })
-    .then((card) => {
-      if (card.owner.toString() !== req.user._id) {
+    .then((article) => {
+      if (article.owner.toString() !== req.user._id) {
         throw new ForbiddenError({ message: 'У вас недостаточно прав' });
       }
-      Card.findByIdAndDelete(req.params._id)
-        .then((card) => {
-          res.send(card);
+      Article.findByIdAndDelete(req.params._id)
+        .then((article) => {
+          res.send(article);
         })
         .catch(next);
     })
     .catch(next);
 };
 
-module.exports.addLike = (req, res, next) => 
-Card.findByIdAndUpdate( req.params._id, { $addToSet: { likes: req.user._id },},{ new: true }, )  
+module.exports.addLike = (req, res, next) =>
+Article.findByIdAndUpdate( req.params._id, { $addToSet: { likes: req.user._id },},{ new: true }, )
     .orFail(() => {
       const err = new Error('Карточка не найдена');
       err.statusCode = 404;
@@ -57,7 +57,7 @@ Card.findByIdAndUpdate( req.params._id, { $addToSet: { likes: req.user._id },},{
     .then((likes) => res.send(likes))
     .catch(next);
 
-module.exports.removeLike = (req, res, next) => Card.findByIdAndUpdate(
+module.exports.removeLike = (req, res, next) => Article.findByIdAndUpdate(
   req.params._id,
   {
     $pull: { likes: req.user._id },
