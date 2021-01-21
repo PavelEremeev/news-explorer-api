@@ -7,7 +7,8 @@ const NotFoundError = require('../errors/NotFoundError');
 const ConflictRequestError = require('../errors/ConflictRequestError');
 const UnAuthError = require('../errors/UnAuthError');
 
-const { NODE_ENV, JWT_SECRET } = process.env;
+const { SALT_ROUND, JWT_SECRET, JWT_SECRET_DEV } = require('../configs');
+const { NODE_ENV } = process.env;
 
 // Авторизация пользователя
 module.exports.login = (req, res, next) => {
@@ -28,8 +29,8 @@ module.exports.login = (req, res, next) => {
     })
     .then((user) => {
       const token = jwt.sign(
-        { _id: user._id },
-        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' },
+        { _id: user._id, email: user.email },
+        NODE_ENV === 'production' ? JWT_SECRET : JWT_SECRET_DEV, { expiresIn: '7d' },
         // eslint-disable-next-line
       );
       res.send({ token });
@@ -38,30 +39,20 @@ module.exports.login = (req, res, next) => {
 
 };
 
-// Получения списка всех зарегистрированных пользователей
-module.exports.getUsers = (req, res, next) => {
-  User.find({})
-    .then((data) => res.send(data))
-    .catch(next);
-};
 
 // Созданите пользователя
 module.exports.createUser = (req, res, next) => {
   const {
     name,
-    about,
-    avatar,
     email,
     password,
   } = req.body;
   // смотрим что прилетает
   console.log(req.body);
 
-  bcrypt.hash(password, 10)
+  bcrypt.hash(password, SALT_ROUND)
     .then((hash) => User.create({
       name,
-      about,
-      avatar,
       email,
       password: hash,
     }))
@@ -80,75 +71,9 @@ module.exports.createUser = (req, res, next) => {
     .catch(next);
 };
 
-module.exports.getOneUser = (req, res, next) => {
-  console.log(req.params);
-  User.findById(req.params._id)
-    .orFail(() => new NotFoundError({ message: 'Нет такого пользователя' }))
-    .catch((err) => {
-      if (err instanceof NotFoundError) {
-        throw err;
-      }
-      throw new BadRequestError({ message: `Некорректные данные: ${err.message}` });
-    })
-    .then((user) => {
-      res.status(200).send(user);
-    })
-    .catch(next);
-};
-
 module.exports.getMyUser = (req, res, next) => {
   console.log(req.user);
   User.findById(req.user._id)
-    .orFail(() => new NotFoundError({ message: 'Нет такого пользователя' }))
-    .catch((err) => {
-      if (err instanceof NotFoundError) {
-        throw err;
-      }
-      throw new BadRequestError({ message: `Некорректные данные: ${err.message}` });
-    })
-    .then((user) => {
-      res.status(200).send(user);
-    })
-    .catch(next);
-};
-
-module.exports.updateUserInfo = (req, res, next) => {
-  const { name, about } = req.body;
-  console.log(req.body);
-  User.findByIdAndUpdate(
-    req.user._id,
-    { name, about },
-    {
-      new: true,
-      runValidators: true,
-      upsert: true,
-      // eslint-disable-next-line
-    })
-    .orFail(() => new NotFoundError({ message: 'Нет такого пользователя' }))
-    .catch((err) => {
-      if (err instanceof NotFoundError) {
-        throw err;
-      }
-      throw new BadRequestError({ message: `Некорректные данные: ${err.message}` });
-    })
-    .then((user) => {
-      res.status(200).send(user);
-    })
-    .catch(next);
-};
-
-module.exports.updateUserAvatar = (req, res, next) => {
-  const { avatar } = req.body;
-  User.findByIdAndUpdate(
-    req.user._id,
-    { avatar },
-    {
-      new: true,
-      runValidators: true,
-      upsert: true,
-
-    },
-  )
     .orFail(() => new NotFoundError({ message: 'Нет такого пользователя' }))
     .catch((err) => {
       if (err instanceof NotFoundError) {

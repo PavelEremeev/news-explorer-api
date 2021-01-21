@@ -1,9 +1,14 @@
-require('dotenv').config();
+
 const express = require('express');
+
 const mongoose = require('mongoose');
+
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
+
+const { PORT, MONGO_DB_URL } = require('./configs/index.js')
+
 const { errors } = require('celebrate');
 const { login, createUser } = require('./controllers/users.js');
 const { requestLogger, errorLogger } = require('./middlewares/logger.js');
@@ -17,8 +22,6 @@ const {
 const NotFoundError = require('./errors/NotFoundError');
 
 const app = express();
-const { PORT = 3000 } = process.env;
-const mongoDbUrl = 'mongodb://localhost:27017/mestodb';
 const mongoConnectionOptions = {
   useNewUrlParser: true,
   useCreateIndex: true,
@@ -39,7 +42,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-mongoose.connect(mongoDbUrl, mongoConnectionOptions);
+mongoose.connect(MONGO_DB_URL, mongoConnectionOptions);
 
 app.use(express.static(path.join(__dirname, 'public')));
 

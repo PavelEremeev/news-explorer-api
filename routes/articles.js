@@ -1,10 +1,8 @@
 const router = require('express').Router();
 const {
-  getArticle,
+  getArticles,
   createArticle,
   deleteArticle,
-  addLike,
-  removeLike,
 } = require('../controllers/articles');
 
 const {
@@ -13,7 +11,7 @@ const {
 } = require('../middlewares/validators');
 
 // Получение карточек
-router.get('/', getArticle);
+router.get('/', getArticles);
 
 // // Создание карточки
 router.post('/', validateArticle, createArticle);
@@ -21,8 +19,5 @@ router.post('/', validateArticle, createArticle);
 // Удаление карточки
 router.delete('/:articleId', validateUserId, deleteArticle);
 
-// Добавление лайка
-router.put('/:articleId/likes', validateUserId, addLike);
-// Удаление лайка
-router.delete('/:articleId/likes', validateUserId, removeLike);
+
 module.exports = router;

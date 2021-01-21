@@ -4,34 +4,56 @@ const BadRequestError = require('../errors/BadRequestError');
 const NotFoundError = require('../errors/NotFoundError');
 const ForbiddenError = require('../errors/ForbiddenError');
 
-module.exports.getArticles = (req, res) => Article.find({})
-  .populate('user')
+module.exports.getArticles = (req, res) => {
+  const {id} = req.user;
+  Article.find({ owner: id})
   .then((articles) => res.send(articles))
   .catch((err) => res.status(500).send({ message: `Ошибка на сервере: ${err.message}` }));
+};
 
 module.exports.createArticle = (req, res, next) => {
   console.log(req.body);
   console.log(req.user._id);
+  const {
+    keyword, title, text, date, source, link, image,
+  } = req.body;
+  const { id } = req.user;
   Article.create({
-    name: req.body.name,
-    link: req.body.link,
-    owner: req.user._id,
+    keyword,
+    title,
+    text,
+    date,
+    source,
+    link,
+    image,
+    owner: id,
   })
     .catch((err) => {
       throw new BadRequestError({ message: `Некорректные данные: ${err.message}` });
     })
-    .then((article) => res.send({ data: article }))
+    .then((article) => res.send({
+      _id: article._id,
+      keyword: article.keyword,
+      title: article.title,
+      text: article.text,
+      date: article.date,
+      source: article.source,
+      link: article.link,
+      image: article.image,
+    }))
     .catch(next);
 };
 
 module.exports.deleteArticle = (req, res, next) => {
-  Article.findById(req.params._id)
+  const {id} = req.user;
+
+  Article.findById(req.params._id).select('+owner')
     .orFail()
     .catch(() => {
       throw new NotFoundError({ message: 'Не найдено карточки с таким id' });
     })
     .then((article) => {
-      if (article.owner.toString() !== req.user._id) {
+      if (article.owner._id.toString() !== id) {
         throw new ForbiddenError({ message: 'У вас недостаточно прав' });
       }
       Article.findByIdAndDelete(req.params._id)
@@ -42,36 +64,3 @@ module.exports.deleteArticle = (req, res, next) => {
     })
     .catch(next);
 };
-
-module.exports.addLike = (req, res, next) =>
-Article.findByIdAndUpdate( req.params._id, { $addToSet: { likes: req.user._id },},{ new: true }, )
-    .orFail(() => {
-      const err = new Error('Карточка не найдена');
-      err.statusCode = 404;
-      throw err;
-    })
-    .orFail()
-    .catch(() => {
-      throw new NotFoundError({ message: 'Не найдено карточки с таким id' });
-    })
-    .then((likes) => res.send(likes))
-    .catch(next);
-
-module.exports.removeLike = (req, res, next) => Article.findByIdAndUpdate(
-  req.params._id,
-  {
-    $pull: { likes: req.user._id },
-  },
-  { new: true },
-)
-  .orFail(() => {
-    const err = new Error('Карточка не найдена');
-    err.statusCode = 404;
-    throw err;
-  })
-  .orFail()
-  .catch(() => {
-    throw new NotFoundError({ message: 'Не найдено карточки с таким id' });
-  })
-  .then((likes) => res.send(likes))
-  .catch(next);
