@@ -6,7 +6,7 @@ const {
 } = require('../controllers/articles');
 
 const {
-  validateUserId,
+  validateArticleId,
   validateArticle,
 } = require('../middlewares/validators');
 
@@ -17,7 +17,7 @@ router.get('/', getArticles);
 router.post('/', validateArticle, createArticle);
 
 // Удаление карточки
-router.delete('/:articleId', validateUserId, deleteArticle);
+router.delete('/:articleId', validateArticleId, deleteArticle);
 
 
 module.exports = router;

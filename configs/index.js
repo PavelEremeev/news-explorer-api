@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const { PORT, NODE_ENV, JWT_SECRET, MONGO_DB_URL } = process.env
+const { PORT, NODE_ENV, JWT_SECRET, MONGO_DB_URL, SALT_ROUND } = process.env
 
 const isProd = NODE_ENV === 'production'
 

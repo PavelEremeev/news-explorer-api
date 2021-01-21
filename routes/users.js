@@ -2,16 +2,12 @@ const router = require('express').Router();
 
 const {
   getMyUser,
-} = require('../controllers/users');
-
-const {
-  validateUserId,
-} = require('../middlewares/validators');
+} = require('../controllers/user');
 
 
 // Получение определенного юзера
 
-router.get('/me', validateUserId, getMyUser);
+router.get('/me',  getMyUser);
 
 
 module.exports = router;

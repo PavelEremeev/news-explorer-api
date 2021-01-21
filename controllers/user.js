@@ -7,8 +7,7 @@ const NotFoundError = require('../errors/NotFoundError');
 const ConflictRequestError = require('../errors/ConflictRequestError');
 const UnAuthError = require('../errors/UnAuthError');
 
-const { SALT_ROUND, JWT_SECRET, JWT_SECRET_DEV } = require('../configs');
-const { NODE_ENV } = process.env;
+const { SALT_ROUND, JWT_SECRET} = require('../configs/index.js');
 
 // Авторизация пользователя
 module.exports.login = (req, res, next) => {
@@ -29,8 +28,8 @@ module.exports.login = (req, res, next) => {
     })
     .then((user) => {
       const token = jwt.sign(
-        { _id: user._id, email: user.email },
-        NODE_ENV === 'production' ? JWT_SECRET : JWT_SECRET_DEV, { expiresIn: '7d' },
+        { id: user._id, email: user.email },
+        JWT_SECRET, { expiresIn: '7d' },
         // eslint-disable-next-line
       );
       res.send({ token });
@@ -62,10 +61,7 @@ module.exports.createUser = (req, res, next) => {
       } else next(err);
     })
     .then((user) => res.status(201).send({
-      _id: user._id,
       name: user.name,
-      about: user.about,
-      avatar: user.avatar,
       email: user.email,
     }))
     .catch(next);

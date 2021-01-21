@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 
-const { JWT_SECRET, JWT_SECRET_DEV } = require('../configs')
-const { NODE_ENV } = process.env;
+const { JWT_SECRET } = require('../configs/index.js')
+
 const UnAuthError = require('../errors/UnAuthError.js');
 
 module.exports = (req, res, next) => {
@@ -15,7 +15,7 @@ module.exports = (req, res, next) => {
 
   let payload;
   try {
-    payload = jwt.verify(token, `${NODE_ENV === 'production' ? JWT_SECRET : JWT_SECRET_DEV}`);
+    payload = jwt.verify(token, JWT_SECRET);
   } catch (err) {
     throw new UnAuthError({ message: 'Необходима авторизация' });
   }
@@ -23,28 +23,3 @@ module.exports = (req, res, next) => {
   // console.log(req.user);
   next();
 };
-
-// const extractBearerToken = (header) => {=
-//   return header.replace('Bearer ', '');
-// };
-
-// module.exports = (req, res, next) => {
-//   const { authorization } = req.headers;
-
-//   if (!authorization || !authorization.startsWith('Bearer ')) {
-//     return handleAuthError(res);
-//   }
-
-//   const token = extractBearerToken(authorization);
-//   let payload;
-
-//   try {
-//     payload = jwt.verify(token, JWT_SECRET);
-//   } catch (err) {
-//     return handleAuthError(res);
-//   }
-
-//   req.user = payload; // записываем пейлоуд в объект запроса
-//   console.log(req.user)
-//   next(); // пропускаем запрос дальше
-// };

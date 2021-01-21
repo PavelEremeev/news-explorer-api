@@ -16,10 +16,10 @@ const validateUser = celebrate({
   }),
 });
 
-const validateUserId = celebrate({
+const validateArticleId = celebrate({
   params: Joi.object().keys({
-    _id: Joi.string().alphanum().length(24).hex(),
-  }),
+    articleId: Joi.string().min(24).max(24).hex().required(),
+  }).unknown(true),
 });
 
 
@@ -32,14 +32,19 @@ const validateLogin = celebrate({
 
 const validateArticle = celebrate({
   body: Joi.object().keys({
-    name: Joi.string().required().min(2).max(30),
+    keyword: Joi.string().required().min(2).max(30),
+    title: Joi.string().required().min(2).max(30),
+    text: Joi.string().required().min(2).max(30),
+    date: Joi.string().required().min(2).max(30),
+    source: Joi.string().required().min(2).max(30),
     link: Joi.string().custom(urlValidation).required(),
+    image: Joi.string().custom(urlValidation).required(),
   }),
 });
 
 module.exports = {
   validateUser,
-  validateUserId,
+  validateArticleId,
   validateLogin,
   validateArticle,
 };

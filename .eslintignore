@@ -1,6 +1,6 @@
 node_modules
 public
-cards.js
-users.js
+articles.js
+user.js
 
 // хз как убрать там те ошибки. просто висят на ровном месте.
