@@ -5,7 +5,8 @@ const NotFoundError = require('../errors/NotFoundError');
 const ForbiddenError = require('../errors/ForbiddenError');
 
 module.exports.getArticles = (req, res) => {
-  Article.find({ owner: req.user._id})
+  const { id } = req.user;
+  Article.find({ owner: id })
   .then((articles) => res.send(articles))
   .catch((err) => res.status(500).send({ message: `Ошибка на сервере: ${err.message}` }));
 };
@@ -17,7 +18,7 @@ module.exports.createArticle = (req, res, next) => {
   const {
     keyword, title, text, date, source, link, image,
   } = req.body;
-
+  const { id } = req.user;
   Article.create({
     keyword,
     title,
@@ -26,7 +27,7 @@ module.exports.createArticle = (req, res, next) => {
     source,
     link,
     image,
-    owner: req.user._id,
+    owner: id,
   })
     .catch((err) => {
       throw new BadRequestError({ message: `Некорректные данные: ${err.message}` });
@@ -46,13 +47,16 @@ module.exports.createArticle = (req, res, next) => {
 
 module.exports.deleteArticle = (req, res, next) => {
   const { articleId } = req.params;
+  const { id } = req.user;
   Article.findOne({_id: articleId}).select('+owner')
     .orFail()
     .catch(() => {
       throw new NotFoundError({ message: 'Не найдено карточки с таким id' });
     })
     .then((article) => {
-      if (article.owner._id.toString() !== req.user._id) {
+      const ownerId = article.owner._id;
+      const ownerIdString = ownerId.toString();
+      if (ownerIdString !== id) {
         throw new ForbiddenError({ message: 'У вас недостаточно прав' });
       }
       Article.findByIdAndRemove({ _id: articleId })

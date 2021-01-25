@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-const { JWT_SECRET } = require('../configs/index.js')
+const { JWT_SECRET } = require('../configs/index.js');
 
 const UnAuthError = require('../errors/UnAuthError.js');
 

@@ -4,10 +4,8 @@ const {
   getMyUser,
 } = require('../controllers/user');
 
-
 // Получение определенного юзера
 
-router.get('/me',  getMyUser);
-
+router.get('/me', getMyUser);
 
 module.exports = router;

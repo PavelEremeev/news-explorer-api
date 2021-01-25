@@ -18,10 +18,10 @@ const validateUser = celebrate({
 
 const validateArticleId = celebrate({
   params: Joi.object().keys({
-    articleId: Joi.string().min(24).max(24).hex().required(),
+    articleId: Joi.string().min(24).max(24).hex()
+      .required(),
   }).unknown(true),
 });
-
 
 const validateLogin = celebrate({
   body: Joi.object().keys({

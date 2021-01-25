@@ -68,8 +68,9 @@ module.exports.createUser = (req, res, next) => {
 };
 
 module.exports.getMyUser = (req, res, next) => {
+  console.log(req.body)
   console.log(req.user);
-  User.findById(req.user._id)
+  User.findOne({ _id: req.user.id })
     .orFail(() => new NotFoundError({ message: 'Нет такого пользователя' }))
     .catch((err) => {
       if (err instanceof NotFoundError) {

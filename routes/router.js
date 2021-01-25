@@ -3,15 +3,14 @@ const express = require('express');
 const path = require('path');
 
 const { login, createUser } = require('../controllers/user');
-const usersRouter = require('../routes/users');
-const articleRouter = require('../routes/articles');
+const usersRouter = require('./users');
+const articleRouter = require('./articles');
 const auth = require('../middlewares/auth.js');
 const {
   validateUser,
   validateLogin,
 } = require('../middlewares/validators');
 const NotFoundError = require('../errors/NotFoundError');
-
 
 router.get('/crash-test', () => {
   setTimeout(() => {
@@ -30,5 +29,4 @@ router.use(() => {
   throw new NotFoundError({ message: 'Запрашиваемый ресурс не найден' });
 });
 
-
-module.exports = router
+module.exports = router;

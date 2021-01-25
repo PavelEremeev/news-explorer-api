@@ -3,15 +3,13 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-
-const limiter = require('./middlewares/limiter');
-const router = require('./routes/router.js')
-const { PORT, MONGO_DB_URL } = require('./configs/index.js')
-
+const helmet = require('helmet');
 const { errors } = require('celebrate');
+const limiter = require('./middlewares/limiter');
+const router = require('./routes/router.js');
+const { PORT, MONGO_DB_URL } = require('./configs/index.js');
+
 const { requestLogger, errorLogger } = require('./middlewares/logger.js');
-
-
 
 const app = express();
 const mongoConnectionOptions = {
@@ -20,10 +18,9 @@ const mongoConnectionOptions = {
   useFindAndModify: false,
   useUnifiedTopology: true,
 };
-
+app.use(limiter);
+app.use(helmet());
 app.use(requestLogger);
-
-
 app.use(cors());
 
 app.use(bodyParser.json());
