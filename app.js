@@ -18,10 +18,16 @@ const mongoConnectionOptions = {
   useFindAndModify: false,
   useUnifiedTopology: true,
 };
-app.use(limiter);
+const corsOptions = {
+  "origin": "*",
+  "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+  "preflightContinue": false
+};
+
+// app.use(limiter);
 app.use(helmet());
 app.use(requestLogger);
-app.use(cors());
+app.use(cors(corsOptions));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
