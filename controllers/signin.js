@@ -18,7 +18,7 @@ module.exports.signin = (req, res, next) => {
         KEY,
         { expiresIn: '7d' },
       );
-      res.send({ token }).send({ message: SUCCESS_LOGIN });
+      res.send({ token });
     })
     .catch(next);
 };
