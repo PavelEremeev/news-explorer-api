@@ -1,37 +1,32 @@
-const Article = require('../models/article');
+const Articles = require('../models/articles');
+const NotFoundError = require('../errors/not-found-err');
+const BadRequestError = require('../errors/bad-reques-err');
+const ForbiddenError = require('../errors/forbidden-err');
+const {
+  BAD_REQUEST_ERR,
+  NOT_FOUND_ITEM_ERR,
+  NOT_FOUND_USER_ITEMS_ERR,
+  BAD_REQUEST_ID_ERR,
+  FORBIDDEN_ERR,
+  SUCCESS_DELETE,
+} = require('../utils/constants');
 
-const BadRequestError = require('../errors/BadRequestError');
-const NotFoundError = require('../errors/NotFoundError');
-const ForbiddenError = require('../errors/ForbiddenError');
-
-module.exports.getArticles = (req, res) => {
-  const { id } = req.user;
-  Article.find({ owner: id })
-  .then((articles) => res.send(articles))
-  .catch((err) => res.status(500).send({ message: `Ошибка на сервере: ${err.message}` }));
+module.exports.getArticle = (req, res, next) => {
+  Articles.find({ owner: req.user }).select('-owner')
+    .orFail(() => new NotFoundError(NOT_FOUND_USER_ITEMS_ERR))
+    .then((user) => res.send(user))
+    .catch(next);
 };
 
 module.exports.createArticle = (req, res, next) => {
-  console.log(req.body);
-  console.log(req.user)
-  // console.log(req.user._id);
   const {
     keyword, title, text, date, source, link, image,
   } = req.body;
-  const { id } = req.user;
-  Article.create({
-    keyword,
-    title,
-    text,
-    date,
-    source,
-    link,
-    image,
-    owner: id,
+  const owner = req.user._id;
+
+  Articles.create({
+    keyword, title, text, date, source, link, image, owner,
   })
-    .catch((err) => {
-      throw new BadRequestError({ message: `Некорректные данные: ${err.message}` });
-    })
     .then((article) => res.send({
       _id: article._id,
       keyword: article.keyword,
@@ -42,28 +37,35 @@ module.exports.createArticle = (req, res, next) => {
       link: article.link,
       image: article.image,
     }))
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new BadRequestError(BAD_REQUEST_ERR));
+      } else {
+        next(err);
+      }
+    });
 };
 
 module.exports.deleteArticle = (req, res, next) => {
-  const { articleId } = req.params;
-  const { id } = req.user;
-  Article.findOne({_id: articleId}).select('+owner')
-    .orFail()
-    .catch(() => {
-      throw new NotFoundError({ message: 'Не найдено карточки с таким id' });
-    })
+  const owner = req.user._id;
+
+  Articles.findOne({ _id: req.params.articleId })
+    .orFail(() => new NotFoundError(NOT_FOUND_ITEM_ERR))
     .then((article) => {
-      const ownerId = article.owner._id;
-      const ownerIdString = ownerId.toString();
-      if (ownerIdString !== id) {
-        throw new ForbiddenError({ message: 'У вас недостаточно прав' });
+      if (article.owner.toString() === owner) {
+        Articles.deleteOne({ _id: req.params.articleId, owner })
+          .orFail(() => new ForbiddenError(FORBIDDEN_ERR))
+          .then(() => res.send({ message: SUCCESS_DELETE }))
+          .catch(next);
+      } else {
+        throw new ForbiddenError(FORBIDDEN_ERR);
       }
-      Article.findByIdAndRemove({ _id: articleId })
-        .then((article) => {
-          res.send(article);
-        })
-        .catch(next);
     })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new BadRequestError(BAD_REQUEST_ID_ERR));
+      } else {
+        next(err);
+      }
+    });
 };
