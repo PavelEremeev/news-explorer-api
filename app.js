@@ -20,7 +20,7 @@ mongoose.connect(DB_NAME, DB_OPTIONS);
 app.use(limiter);
 app.use(helmet());
 app.use(cors(CORS_OPTIONS));
-app.use(cookieParser());
+// app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(requestLogger);
