@@ -24,10 +24,15 @@ const DB_OPTIONS = {
   useUnifiedTopology: true,
 };
 
+const allowedCors = [
+  'https://eremeev1.students.nomoredomains.rocks',
+  'http://eremeev1.students.nomoredomains.rocks',
+  'http://localhost:3000',
+  'http://localhost:3001'
+];
+
 const CORS_OPTIONS = {
-  "origin": "*",
-  "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
-  "preflightContinue": false
+  "origin": allowedCors
 };
 
 module.exports = {
