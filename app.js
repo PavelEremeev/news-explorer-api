@@ -30,11 +30,11 @@ mongoose.connect(NODE_ENV === 'production' ? MONGO_BASE : MONGO_BASE_DEV, {
   useUnifiedTopology: true
 });
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(cors());
 app.use(requestLogger);
-app.use(limiter);
+// app.use(limiter);
 
 router.use('*', (req, res, next) => {
   const error404 = new Error404('Запрашиваемый ресурс не найден');
