@@ -1,34 +1,15 @@
 # news-explorer-api
-Репозиторий API проекта News Explorer, включающий авторизацию, регистрацию пользователей и операции с карточками новостей.  
+# API для  проекта NewsExplorer
 
-### Обзор
-* Описание
-* Запуск проекта
-* Технологии
-* Планы по доработке
+Node.JS
 
-#### Описание
-Проект News Explorer выполненн на Node.js, Mongodb и Express.
-* IP-адрес сервера : 37.230.115.88
-* URL API https://api.eremeev1.students.nomoredomains.rocks
-* [Ссылка на фронтенд репозиторий](https://github.com/PavelEremeev/news-explorer-frontend)
+## <https://api.eremeev2.students.nomoredomains.rocks>
+## <https://www.api.eremeev2.students.nomoredomains.rocks>
 
-#### Запуск проекта
-* [Ссылка](https://api.eremeev1.students.nomoredomains.rocks)
+### Реализовано:
+* Создание и авторизация юзера;
+* Создание роутов и контроллеров для получения информации о юзере и созданных статьях, сохранение/удаление статей юзером.
+* Реализовано логирование;
+* Реализована валидация запросов посредством Schemas и celebrate;
+* Реализована централизованная обработка ошибок;
 
-#### Технологии
-* Javascript.
-* Node
-* Express
-* Eslint
-* MongoDB
-* Mongoose
-* REST 
-  * Клиент-сервер
-  * Отсутствие состояния 
-  * Единый интерфейс
-  * Многоуровневость
-  * Кешируемость
-  * Код по запросу
-* Nginx
-* Celebrate/Joi
