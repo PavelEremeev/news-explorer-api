@@ -1,22 +1,18 @@
 module.exports = {
   env: {
-    node: true,
+    browser: false,
+    commonjs: true,
+    es2021: true,
   },
   extends: [
     'airbnb-base',
   ],
   parserOptions: {
-
-    ecmaFeatures: {
-      jsx: true,
-    },
-    ecmaVersion: 6,
-    sourceType: 'module',
+    ecmaVersion: 12,
   },
-  plugins: [
-    'react',
-  ],
   rules: {
-    'no-underscore-dangle': ['off', { allow: ['_id'] }],
+    'no-underscore-dangle': ['error', {
+      allow: ['_id'],
+    }],
   },
 };

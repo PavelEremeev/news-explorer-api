@@ -1,11 +1,9 @@
 const router = require('express').Router();
 
 const {
-  getMyUser,
+  getUserMe,
 } = require('../controllers/user');
 
-// Получение определенного юзера
-
-router.get('/me', getMyUser);
+router.get('/users/me', getUserMe);
 
 module.exports = router;

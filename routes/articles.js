@@ -1,23 +1,15 @@
 const router = require('express').Router();
+const { celebrate } = require('celebrate');
+const { createArticleRequest, deleteArticleRequest } = require('../middlewares/request-validation');
+
 const {
   getArticles,
+  deleteArticleById,
   createArticle,
-  deleteArticle,
-} = require('../controllers/articles');
+} = require('../controllers/article');
 
-const {
-  validateArticleId,
-  validateArticle,
-} = require('../middlewares/validators');
-
-// Получение карточек
-router.get('/', getArticles);
-
-// // Создание карточки
-router.post('/', validateArticle, createArticle);
-
-// Удаление карточки
-router.delete('/:articleId', validateArticleId, deleteArticle);
-
+router.get('/articles', getArticles);
+router.post('/articles', celebrate(createArticleRequest), createArticle);
+router.delete('/articles/:articleId', celebrate(deleteArticleRequest), deleteArticleById);
 
 module.exports = router;

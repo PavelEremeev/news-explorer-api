@@ -25,19 +25,19 @@ const articleSchema = new Schema({
   link: {
     type: String,
     required: true,
-    validate(value) {
-      if (!validator.isURL(value)) {
-        throw new Error('Неккоректная ссылка');
-      }
+    validate: {
+      validator(v) {
+        return validator.isURL(v);
+      },
     },
   },
   image: {
     type: String,
     required: true,
-    validate(value) {
-      if (!validator.isURL(value)) {
-        throw new Error('Неккоректная ссылка');
-      }
+    validate: {
+      validator(v) {
+        return validator.isURL(v);
+      },
     },
   },
   owner: {

@@ -1,5 +1,6 @@
-const { Schema, model } = require('mongoose');
 const validator = require('validator');
+
+const { Schema, model } = require('mongoose');
 
 const userSchema = new Schema({
   name: {
@@ -9,28 +10,25 @@ const userSchema = new Schema({
     maxlength: 30,
     validate: {
       validator(v) {
-        // eslint-disable-next-line no-useless-escape
-        return /[a-zA-ZА-ЯЁа-яё\s\d\-]+/.test(v);
+        return /[a-zA-ZА-ЯЁа-яё\s\d\\-]+/.test(v);
       },
       message: 'Введите имя',
     },
   },
-
   email: {
     type: String,
     required: true,
     unique: true,
-    validate(value) {
-      if (!validator.isEmail(value)) {
-        throw new Error('Неккоректный e-mail');
-      }
+    validate: {
+      validator(v) {
+        return validator.isEmail(v);
+      },
+      message: 'Введите e-mail',
     },
   },
-
   password: {
     type: String,
     required: true,
-    minlength: 8,
     select: false,
   },
 });
